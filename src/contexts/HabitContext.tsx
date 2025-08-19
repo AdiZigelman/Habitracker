@@ -104,6 +104,7 @@ const habitReducer = (state: HabitState, action: HabitAction): HabitState => {
         newCompletions.push(newCompletion);
       }
       
+      // Update habit stats
       updatedHabits = state.habits.map(habit => {
         if (habit.id === habitId) {
           const habitCompletions = newCompletions.filter(
@@ -140,10 +141,37 @@ const habitReducer = (state: HabitState, action: HabitAction): HabitState => {
         return habit;
       });
       
+      // Calculate new stats immediately
+      const newTotalXP = updatedHabits.reduce((sum, habit) => {
+        const habitXP = calculateXP(habit, state.stats.level || 0);
+        return sum + (isNaN(habitXP) ? 0 : habitXP);
+      }, 0);
+      
+      const newTotalHabits = updatedHabits.length;
+      const newActiveHabits = updatedHabits.filter(habit => habit.isActive).length;
+      const newTotalCompletions = newCompletions.filter(comp => comp.completed).length;
+      const newAverageStreak = updatedHabits.length > 0 
+        ? updatedHabits.reduce((sum, habit) => sum + (habit.streak || 0), 0) / updatedHabits.length
+        : 0;
+      
+      const currentLevel = state.stats.level || 1;
+      
+      const calculatedLevel = Math.max(currentLevel, Math.max(1, Math.floor((newTotalXP || 0) / 1000) + 1));
+      const preservedTotalXP = Math.max(currentLevel, newTotalXP || 0);
+      
       return {
         ...state,
         habits: updatedHabits,
-        completions: newCompletions
+        completions: newCompletions,
+        stats: {
+          ...state.stats,
+          totalXP: preservedTotalXP,
+          level: calculatedLevel,
+          totalHabits: newTotalHabits,
+          activeHabits: newActiveHabits,
+          totalCompletions: newTotalCompletions,
+          averageStreak: Math.round(newAverageStreak) || 0
+        }
       };
     }
     

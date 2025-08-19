@@ -138,16 +138,14 @@ const CalendarView: React.FC = () => {
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: index * 0.01 }}
                 onClick={() => {
-                  if (dayStatus.totalCount > 0) {
-                    setSelectedDay(date);
-                    setShowDayPopup(true);
-                  }
+                  setSelectedDay(date);
+                  setShowDayPopup(true);
                 }}
                 className={`
                   aspect-square p-2 rounded-lg border-2 transition-all cursor-pointer hover:scale-105
                   ${isToday ? 'border-blue-500 ring-2 ring-blue-200' : 'border-gray-100'}
                   ${!isCurrentMonth ? 'opacity-30' : ''}
-                  ${dayStatus.totalCount > 0 ? 'hover:border-blue-300' : ''}
+                  hover:border-blue-300
                 `}
               >
                 {/* Date Number */}
@@ -239,42 +237,41 @@ const CalendarView: React.FC = () => {
               </div>
               
               <div className="space-y-4">
-                {getDayCompletionStatus(selectedDay).completions.map((completion, index) => {
-                  const habit = state.habits.find(h => h.id === completion.habitId);
-                  if (!habit) return null;
-                  
-                  return (
-                    <div key={index} className="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
-                      <div className="flex items-center space-x-3">
-                        <div className={`w-10 h-10 ${habit.color} rounded-lg flex items-center justify-center text-xl`}>
-                          {habit.icon}
+                {getDayCompletionStatus(selectedDay).totalCount > 0 ? (
+                  getDayCompletionStatus(selectedDay).completions.map((completion, index) => {
+                    const habit = state.habits.find(h => h.id === completion.habitId);
+                    if (!habit) return null;
+                    
+                    return (
+                      <div key={index} className="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
+                        <div className="flex items-center space-x-3">
+                          <div className={`w-10 h-10 ${habit.color} rounded-lg flex items-center justify-center text-xl`}>
+                            {habit.icon}
+                          </div>
+                          <div>
+                            <h4 className="font-semibold text-gray-800">{habit.name}</h4>
+                            <p className="text-sm text-gray-500 capitalize">{habit.frequency}</p>
+                          </div>
                         </div>
-                        <div>
-                          <h4 className="font-semibold text-gray-800">{habit.name}</h4>
-                          <p className="text-sm text-gray-500 capitalize">{habit.frequency}</p>
+                        <div className="text-right">
+                          <div className={`text-lg ${completion.completed ? 'text-green-600' : 'text-gray-400'}`}>
+                            {completion.completed ? '✅' : '⭕'}
+                          </div>
+                          <p className="text-sm text-gray-500">
+                            {completion.completed ? 'Completed' : 'Not completed'}
+                          </p>
                         </div>
                       </div>
-                      <div className="text-right">
-                        <div className={`text-lg ${completion.completed ? 'text-green-600' : 'text-gray-400'}`}>
-                          {completion.completed ? '✅' : '⭕'}
-                        </div>
-                        <p className="text-sm text-gray-500">
-                          {completion.completed ? 'Completed' : 'Not completed'}
-                        </p>
-                      </div>
-                    </div>
-                  );
-                })}
+                    );
+                  })
+                ) : (
+                  <div className="text-center py-8">
+                    <div className="text-6xl mb-4 text-gray-300">📅</div>
+                    <h4 className="text-lg font-semibold text-gray-600 mb-2">No Habits Scheduled</h4>
+                  </div>
+                )}
               </div>
-              
-              <div className="mt-6 text-center">
-                <button
-                  onClick={() => setShowDayPopup(false)}
-                  className="px-6 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
-                >
-                  Close
-                </button>
-              </div>
+          
             </div>
           </motion.div>
         </motion.div>

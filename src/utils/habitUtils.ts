@@ -151,10 +151,11 @@ export const checkAchievements = (habits: any[], completions: any[], stats: any)
 
 export const calculateXP = (habit: any, userLevel: number): number => {
   const baseXP = 10;
+  const completionXP = (habit.totalCompletions || 0) * 10; // +10 XP per completion
   const streakBonus = Math.floor((habit.streak || 0) / 7) * 5;
   const levelMultiplier = Math.max(1, (userLevel || 1) * 0.1);
   
-  const totalXP = (baseXP + streakBonus) * levelMultiplier;
+  const totalXP = (baseXP + completionXP + streakBonus) * levelMultiplier;
   return isNaN(totalXP) ? 0 : Math.round(totalXP);
 };
 

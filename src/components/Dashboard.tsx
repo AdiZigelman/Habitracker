@@ -55,10 +55,10 @@ const Dashboard: React.FC = () => {
         className="text-center mb-8"
       >
         <h2 className="text-4xl font-bold text-gray-800 mb-4">
-          Welcome back! 🎉
+          Welcome! 🎉
         </h2>
         <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-          Keep building those positive habits! 
+          Let's build some positive habits! 
         </p>
       </motion.div>
       
