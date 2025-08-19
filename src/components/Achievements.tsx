@@ -1,7 +1,7 @@
 import React from 'react';
 import { useHabits } from '../contexts/HabitContext';
 import { motion } from 'framer-motion';
-import { Trophy, Star, Target, Zap, ArrowLeft } from 'lucide-react';
+import { Trophy, Target, ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const Achievements: React.FC = () => {
@@ -188,7 +188,7 @@ const Achievements: React.FC = () => {
         
         <div className="grid grid-cols-3 gap-6">
           {potentialAchievements.map((achievement, index) => {
-            const { isUnlocked, progress, isComplete, showInProgress } = getAchievementStatus(achievement);
+            const { progress, isComplete, showInProgress } = getAchievementStatus(achievement);
             
             return (
               <motion.div

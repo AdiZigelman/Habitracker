@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useHabits } from '../contexts/HabitContext';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Save, Palette, Calendar } from 'lucide-react';
+import { ArrowLeft, Save, Calendar } from 'lucide-react';
 
 const HabitForm: React.FC = () => {
   const navigate = useNavigate();

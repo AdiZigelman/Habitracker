@@ -9,15 +9,6 @@ const StatsOverview: React.FC = () => {
   
   const activeHabits = state.habits.filter(habit => habit.isActive);
   
-  const completedToday = activeHabits.filter(habit => {
-    const today = new Date();
-    return state.completions.some(comp => 
-      comp.habitId === habit.id && 
-      comp.date.toDateString() === today.toDateString() && 
-      comp.completed
-    );
-  }).length;
-  
   const topHabits = [...activeHabits]
     .sort((a, b) => b.streak - a.streak)
     .slice(0, 5);

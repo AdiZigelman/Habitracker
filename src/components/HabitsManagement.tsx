@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useHabits } from '../contexts/HabitContext';
 import { Habit } from '../types';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Edit3, Trash2, Save, X, Palette, Calendar } from 'lucide-react';
+import { ArrowLeft, Edit3, Trash2, Save, X, Calendar } from 'lucide-react';
 import { calculateCompletionRatio } from '../utils/habitUtils';
 
 const HabitsManagement: React.FC = () => {

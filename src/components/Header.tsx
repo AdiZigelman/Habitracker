@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useHabits } from '../contexts/HabitContext';
-import { Trophy, Home, Target, Settings } from 'lucide-react';
+import { Trophy, Home, Settings } from 'lucide-react';
 
 const Header: React.FC = () => {
   const { state } = useHabits();
