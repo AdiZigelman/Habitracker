@@ -153,7 +153,7 @@ const Dashboard: React.FC = () => {
                     to="/manage-habits"
                     className="btn-primary inline-block"
                   >
-                    Create Your First Habit
+                    Manage Habits
                   </Link>
                 </div>
               ) : (

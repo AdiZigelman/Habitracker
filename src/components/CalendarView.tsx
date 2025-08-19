@@ -2,11 +2,13 @@ import React, { useState } from 'react';
 import { useHabits } from '../contexts/HabitContext';
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isSameDay, addMonths, subMonths } from 'date-fns';
 import { motion } from 'framer-motion';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, X } from 'lucide-react';
 
 const CalendarView: React.FC = () => {
   const { state, isHabitCompleted } = useHabits();
   const [currentDate, setCurrentDate] = useState(new Date());
+  const [selectedDay, setSelectedDay] = useState<Date | null>(null);
+  const [showDayPopup, setShowDayPopup] = useState(false);
   
   const monthStart = startOfMonth(currentDate);
   const monthEnd = endOfMonth(currentDate);
@@ -135,10 +137,17 @@ const CalendarView: React.FC = () => {
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: index * 0.01 }}
+                onClick={() => {
+                  if (dayStatus.totalCount > 0) {
+                    setSelectedDay(date);
+                    setShowDayPopup(true);
+                  }
+                }}
                 className={`
                   aspect-square p-2 rounded-lg border-2 transition-all cursor-pointer hover:scale-105
                   ${isToday ? 'border-blue-500 ring-2 ring-blue-200' : 'border-gray-100'}
                   ${!isCurrentMonth ? 'opacity-30' : ''}
+                  ${dayStatus.totalCount > 0 ? 'hover:border-blue-300' : ''}
                 `}
               >
                 {/* Date Number */}
@@ -203,6 +212,73 @@ const CalendarView: React.FC = () => {
           })}
         </div>
       </div>
+      
+      {/* Day Popup Modal */}
+      {showDayPopup && selectedDay && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
+        >
+          <motion.div
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            className="bg-white rounded-2xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+          >
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-xl font-bold text-gray-800">
+                  Habits for {format(selectedDay, 'EEEE, MMMM d, yyyy')}
+                </h3>
+                <button
+                  onClick={() => setShowDayPopup(false)}
+                  className="p-2 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100"
+                >
+                  <X size={20} />
+                </button>
+              </div>
+              
+              <div className="space-y-4">
+                {getDayCompletionStatus(selectedDay).completions.map((completion, index) => {
+                  const habit = state.habits.find(h => h.id === completion.habitId);
+                  if (!habit) return null;
+                  
+                  return (
+                    <div key={index} className="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
+                      <div className="flex items-center space-x-3">
+                        <div className={`w-10 h-10 ${habit.color} rounded-lg flex items-center justify-center text-xl`}>
+                          {habit.icon}
+                        </div>
+                        <div>
+                          <h4 className="font-semibold text-gray-800">{habit.name}</h4>
+                          <p className="text-sm text-gray-500 capitalize">{habit.frequency}</p>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <div className={`text-lg ${completion.completed ? 'text-green-600' : 'text-gray-400'}`}>
+                          {completion.completed ? '✅' : '⭕'}
+                        </div>
+                        <p className="text-sm text-gray-500">
+                          {completion.completed ? 'Completed' : 'Not completed'}
+                        </p>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+              
+              <div className="mt-6 text-center">
+                <button
+                  onClick={() => setShowDayPopup(false)}
+                  className="px-6 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
     </div>
   );
 };

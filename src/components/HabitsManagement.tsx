@@ -11,6 +11,8 @@ const HabitsManagement: React.FC = () => {
   const { state, updateHabit, deleteHabit, addHabit } = useHabits();
   const [editingHabit, setEditingHabit] = useState<Habit | null>(null);
   const [showAddHabit, setShowAddHabit] = useState(false);
+  const [showDeletePopup, setShowDeletePopup] = useState(false);
+  const [habitToDelete, setHabitToDelete] = useState<Habit | null>(null);
   const [editForm, setEditForm] = useState({
     name: '',
     icon: '',
@@ -97,9 +99,21 @@ const HabitsManagement: React.FC = () => {
   };
   
   const handleDelete = (habit: Habit) => {
-    if (window.confirm(`Are you sure you want to delete "${habit.name}"? This action cannot be undone.`)) {
-      deleteHabit(habit.id);
+    setHabitToDelete(habit);
+    setShowDeletePopup(true);
+  };
+
+  const confirmDelete = () => {
+    if (habitToDelete) {
+      deleteHabit(habitToDelete.id);
+      setShowDeletePopup(false);
+      setHabitToDelete(null);
     }
+  };
+
+  const cancelDelete = () => {
+    setShowDeletePopup(false);
+    setHabitToDelete(null);
   };
   
   return (
@@ -124,12 +138,14 @@ const HabitsManagement: React.FC = () => {
           <p className="text-xl text-gray-600">
             Customize colors, names, frequencies, and reminders for all your habits
           </p>
-          <button
-            onClick={startAddingHabit}
-            className="mt-6 btn-primary"
-          >
-            + Add New Habit
-          </button>
+          {activeHabits.length > 0 && (
+            <button
+              onClick={startAddingHabit}
+              className="mt-6 btn-primary"
+            >
+              + Add New Habit
+            </button>
+          )}
         </div>
       </motion.div>
       
@@ -546,6 +562,44 @@ const HabitsManagement: React.FC = () => {
                   </button>
                 </div>
               </form>
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
+
+      {/* Delete Confirmation Popup */}
+      {showDeletePopup && habitToDelete && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
+        >
+          <motion.div
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            className="bg-white rounded-2xl shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto"
+          >
+            <div className="p-6 text-center">
+              <div className="text-6xl mb-4 text-red-500">⚠️</div>
+              <h3 className="text-2xl font-bold text-gray-800 mb-4">Confirm Deletion</h3>
+              <p className="text-gray-600 mb-6">
+                Are you sure you want to delete "{habitToDelete.name}"? This action cannot be undone.
+              </p>
+              <div className="flex space-x-4">
+                <button
+                  onClick={confirmDelete}
+                  className="flex-1 py-2 px-4 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors flex items-center justify-center space-x-2"
+                >
+                  <Trash2 size={16} />
+                  <span>Delete</span>
+                </button>
+                <button
+                  onClick={cancelDelete}
+                  className="flex-1 py-2 px-4 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+                >
+                  Cancel
+                </button>
+              </div>
             </div>
           </motion.div>
         </motion.div>
